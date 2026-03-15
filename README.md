@@ -1,1 +1,1 @@
-# bci-team-2-mechmania-2026
+# Bluevale Collegiate Institute MechMania 2026 Team 2
