@@ -17,17 +17,16 @@ Links used:
 
 #define JOYSTICK_DEADZONE 5  // minimum change to trigger send
 
-const int buttonPin = 2;
-int buttonState = 0;
-int lastButtonState = 0;
+#define GAS_PIN 2
 
 typedef struct {
-  int16_t x;
-  int16_t y;
-  uint8_t pressed;
+  short x;
+  short y;
+  bool joystickPressed;
+  bool gasPressed;
 } DataPackage;
 
-DataPackage lastSent = {0, 0, 0};  // Keep track of last values
+DataPackage lastSent = {0, 0, false, false};  // Keep track of last values
 
 RF24 radio(7, 8);  // CE, CSN
 
@@ -35,6 +34,7 @@ const byte address[6] = "00001";
 
 void setup() {
   pinMode(ANALOG_BUTTON_PIN, INPUT_PULLUP); 
+  pinMode(GAS_PIN, INPUT_PULLUP);
   radio.begin();
   radio.openWritingPipe(address);
   radio.setPALevel(RF24_PA_MIN);
@@ -45,24 +45,16 @@ void loop() {
   DataPackage current;
   current.x = readAnalogAxisLevel(ANALOG_X_PIN) - 128;
   current.y = readAnalogAxisLevel(ANALOG_Y_PIN) - 128;
-  current.pressed = isAnalogButtonPressed(ANALOG_BUTTON_PIN);
+  current.joystickPressed = isAnalogButtonPressed(ANALOG_BUTTON_PIN);
+  current.gasPressed = digitalRead(GAS_PIN) != HIGH;
 
   // Check if joystick moved beyond deadzone or button changed
   bool xChanged = abs(current.x - lastSent.x) >= JOYSTICK_DEADZONE;
   bool yChanged = abs(current.y - lastSent.y) >= JOYSTICK_DEADZONE;
-  bool buttonChanged = current.pressed != lastSent.pressed;
+  bool gasChanged = current.gasPressed != lastSent.gasPressed;
+  bool joystickChanged = current.joystickPressed != lastSent.joystickPressed;
 
-  buttonState = digitalRead(buttonPin)
-
-  // if button state changes, check if button pressed is true
-  if (buttonState != lastButtonState) {
-    if (buttonState == LOW) {
-      radio.write("Gas pressed", sizeof(String));
-    }
-    lastButtonState = buttonState; 
-  }
-
-  if (xChanged || yChanged || buttonChanged) {
+  if (xChanged || yChanged || joystickChanged || gasChanged) {
     bool ok = radio.write(&current, sizeof(current));
     if (!ok) {
       Serial.println("Send failed!");
