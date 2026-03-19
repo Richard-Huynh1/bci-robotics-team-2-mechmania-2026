@@ -1,16 +1,20 @@
 /*
-* Arduino Wireless Communication Tutorial
-*       Example 1 - Receiver Code
-*                
-* by Dejan Nedelkovski, www.HowToMechatronics.com
-* 
-* Library: TMRh20/RF24, https://github.com/tmrh20/RF24/
-* NOTE: When using the HW-200, connect VCC to 5V instead of 3.3V.
+Links used:
+- https://howtomechatronics.com/tutorials/arduino/arduino-wireless-communication-nrf24l01-tutorial/
+- https://projecthub.arduino.cc/hibit/using-joystick-module-with-arduino-0ffdd4
 */
 
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
+
+typedef struct {
+  short x = 0;
+  short y = 0;
+  bool pressed = false;
+} DataPackage;
+
+DataPackage data;
 
 RF24 radio(7, 8); // CE, CSN
 
@@ -26,8 +30,11 @@ void setup() {
 
 void loop() {
   if (radio.available()) {
-    char text[32] = "";
-    radio.read(&text, sizeof(text));
-    Serial.println(text);
+    radio.read(&data, sizeof(data));
+
+    char buffer[64];
+    snprintf(buffer, sizeof(buffer), "(%d, %d), button pressed: %s", data.x, data.y, data.pressed ? "true" : "false" );
+
+    Serial.println(buffer);
   }
 }
