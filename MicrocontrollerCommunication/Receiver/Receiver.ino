@@ -9,9 +9,11 @@ Links used:
 #include <RF24.h>
 
 typedef struct {
-  short x = 0;
-  short y = 0;
-  bool pressed = false;
+  short x;
+  short y;
+  bool joystickPressed;
+  bool maxGasPressed;
+  bool halfGasPressed;
 } DataPackage;
 
 DataPackage data;
@@ -32,8 +34,12 @@ void loop() {
   if (radio.available()) {
     radio.read(&data, sizeof(data));
 
-    char buffer[64];
-    snprintf(buffer, sizeof(buffer), "(%d, %d), button pressed: %s", data.x, data.y, data.pressed ? "true" : "false" );
+    char buffer[128];
+    snprintf(buffer, sizeof(buffer),
+      "(%d, %d), joystick button pressed: %s, max gas pressed: %s, half gas pressed: %s",
+       data.x, data.y, data.joystickPressed ? "true" : "false",
+       data.maxGasPressed ? "true" : "false", data.halfGasPressed ? "true" : "false"
+    );
 
     Serial.println(buffer);
   }
