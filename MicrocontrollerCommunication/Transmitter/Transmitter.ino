@@ -17,6 +17,10 @@ Links used:
 
 #define JOYSTICK_DEADZONE 5  // minimum change to trigger send
 
+const int buttonPin = 2;
+int buttonState = 0;
+int lastButtonState = 0;
+
 typedef struct {
   int16_t x;
   int16_t y;
@@ -30,7 +34,7 @@ RF24 radio(7, 8);  // CE, CSN
 const byte address[6] = "00001";
 
 void setup() {
-  pinMode(ANALOG_BUTTON_PIN, INPUT_PULLUP);
+  pinMode(ANALOG_BUTTON_PIN, INPUT_PULLUP); 
   radio.begin();
   radio.openWritingPipe(address);
   radio.setPALevel(RF24_PA_MIN);
@@ -47,6 +51,16 @@ void loop() {
   bool xChanged = abs(current.x - lastSent.x) >= JOYSTICK_DEADZONE;
   bool yChanged = abs(current.y - lastSent.y) >= JOYSTICK_DEADZONE;
   bool buttonChanged = current.pressed != lastSent.pressed;
+
+  buttonState = digitalRead(buttonPin)
+
+  // if button state changes, check if button pressed is true
+  if (buttonState != lastButtonState) {
+    if (buttonState == LOW) {
+      radio.write("Gas pressed", sizeof(String));
+    }
+    lastButtonState = buttonState; 
+  }
 
   if (xChanged || yChanged || buttonChanged) {
     bool ok = radio.write(&current, sizeof(current));
