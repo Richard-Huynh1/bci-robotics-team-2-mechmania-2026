@@ -15,7 +15,7 @@ Links used:
 #define ANALOG_X_CORRECTION 128
 #define ANALOG_Y_CORRECTION 128
 
-#define JOYSTICK_DEADZONE 5  // minimum change to trigger send
+#define JOYSTICK_DEADZONE 40  // Minimum change to trigger send
 
 #define MAX_GAS_PIN 2
 #define HALF_GAS_PIN 1
@@ -26,15 +26,17 @@ typedef struct {
   bool joystickPressed;
   bool maxGasPressed;
   bool halfGasPressed;
+  bool isCorrectSignal;
 } DataPackage;
 
-DataPackage lastSent = {0, 0, false, false, false};  // Keep track of last values
+DataPackage lastSent = {0, 0, false, false, false, true};  // Keep track of last values
 
 RF24 radio(7, 8);  // CE, CSN
 
 const byte address[6] = "00001";
 
 void setup() {
+  Serial.begin(9600);
   pinMode(ANALOG_BUTTON_PIN, INPUT_PULLUP); 
   pinMode(MAX_GAS_PIN, INPUT_PULLUP);
   pinMode(HALF_GAS_PIN, INPUT_PULLUP);
@@ -51,6 +53,14 @@ void loop() {
   current.joystickPressed = isAnalogButtonPressed(ANALOG_BUTTON_PIN);
   current.maxGasPressed = digitalRead(MAX_GAS_PIN) == LOW;
   current.halfGasPressed = digitalRead(HALF_GAS_PIN) == LOW;
+  current.isCorrectSignal = true;
+
+  if (-5 <= current.x && current.x <= 5) {
+    current.x = 0;
+  }
+  if (-5 <= current.y && current.y <= 5) {
+    current.y = 0;
+  }
 
   // Check if joystick moved beyond deadzone or button changed
   bool xChanged = abs(current.x - lastSent.x) >= JOYSTICK_DEADZONE;
@@ -67,7 +77,7 @@ void loop() {
     lastSent = current;
   }
 
-  delay(5);
+  delay(100);
 }
 
 byte readAnalogAxisLevel(int pin) {
