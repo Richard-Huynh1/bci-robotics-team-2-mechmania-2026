@@ -17,32 +17,40 @@ Links used:
 
 #define JOYSTICK_DEADZONE 40  // Minimum change to trigger send
 
-#define MAX_GAS_PIN 2
-#define HALF_GAS_PIN 1
+#define BUTTON_PIN_1 0  // Full gas/forklift up
+#define BUTTON_PIN_2 1  // Half gas/forklift down
+#define BUTTON_PIN_3 2  // Spin drill
+#define BUTTON_PIN_4 3  // Switch modes
 
 typedef struct {
   short x;
   short y;
-  bool joystickPressed;
-  bool maxGasPressed;
-  bool halfGasPressed;
-  bool isCorrectSignal;
+  bool joystickPressed;  // Rotate in one place
+  bool btn1Pressed;
+  bool btn2Pressed;
+  bool btn3Pressed;
+  bool btn4Pressed;
+  char password[6];
 } DataPackage;
 
-DataPackage lastSent = {0, 0, false, false, false, true};  // Keep track of last values
+DataPackage lastSent = {0, 0, false, false, false, false, false, "BCIT2"};  // Keep track of last values
 
 RF24 radio(7, 8);  // CE, CSN
 
-const byte address[6] = "00001";
+const byte address[6] = "BCIT2";
 
 void setup() {
   Serial.begin(9600);
   pinMode(ANALOG_BUTTON_PIN, INPUT_PULLUP); 
-  pinMode(MAX_GAS_PIN, INPUT_PULLUP);
-  pinMode(HALF_GAS_PIN, INPUT_PULLUP);
+  pinMode(BUTTON_PIN_1, INPUT_PULLUP);
+  pinMode(BUTTON_PIN_2, INPUT_PULLUP);
+  pinMode(BUTTON_PIN_3, INPUT_PULLUP);
+  pinMode(BUTTON_PIN_4, INPUT_PULLUP);
   radio.begin();
+  radio.setChannel(108);
   radio.openWritingPipe(address);
   radio.setPALevel(RF24_PA_MIN);
+  radio.setRetries(15, 15);
   radio.stopListening();
 }
 
@@ -51,9 +59,11 @@ void loop() {
   current.x = readAnalogAxisLevel(ANALOG_X_PIN) - 128;
   current.y = readAnalogAxisLevel(ANALOG_Y_PIN) - 128;
   current.joystickPressed = isAnalogButtonPressed(ANALOG_BUTTON_PIN);
-  current.maxGasPressed = digitalRead(MAX_GAS_PIN) == LOW;
-  current.halfGasPressed = digitalRead(HALF_GAS_PIN) == LOW;
-  current.isCorrectSignal = true;
+  current.btn1Pressed = digitalRead(BUTTON_PIN_1) == LOW;
+  current.btn2Pressed = digitalRead(BUTTON_PIN_2) == LOW;
+  current.btn3Pressed = digitalRead(BUTTON_PIN_3) == LOW;
+  current.btn4Pressed = digitalRead(BUTTON_PIN_4) == LOW;
+  strcpy(current.password, "BCIT2");
 
   if (-5 <= current.x && current.x <= 5) {
     current.x = 0;
@@ -65,11 +75,15 @@ void loop() {
   // Check if joystick moved beyond deadzone or button changed
   bool xChanged = abs(current.x - lastSent.x) >= JOYSTICK_DEADZONE;
   bool yChanged = abs(current.y - lastSent.y) >= JOYSTICK_DEADZONE;
-  bool maxGasChanged = current.maxGasPressed != lastSent.maxGasPressed;
-  bool halfGasChanged = current.halfGasPressed != lastSent.halfGasPressed;
+  bool btn1Changed = current.btn1Pressed != lastSent.btn1Pressed;
+  bool btn2Changed = current.btn2Pressed != lastSent.btn2Pressed;
+  bool btn3Changed = current.btn3Pressed != lastSent.btn3Pressed;
+  bool btn4Changed = current.btn4Pressed != lastSent.btn4Pressed;
   bool joystickChanged = current.joystickPressed != lastSent.joystickPressed;
 
-  if (xChanged || yChanged || joystickChanged || maxGasChanged || halfGasChanged) {
+  if (xChanged || yChanged || joystickChanged
+    || btn1Changed || btn2Changed || btn3Changed || btn4Changed)
+  {
     bool ok = radio.write(&current, sizeof(current));
     if (!ok) {
       Serial.println("Send failed!");
