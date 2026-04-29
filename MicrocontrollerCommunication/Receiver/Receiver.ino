@@ -15,6 +15,7 @@ See image (for joystick):
 
 #define MAX_SPEED 255
 #define HALF_SPEED 128
+#define QUARTER_SPEED 64
 
 #define M1A 2
 #define M1B 3
@@ -76,9 +77,13 @@ void loop() {
         speedLeft = HALF_SPEED;
         speedRight = HALF_SPEED;
         move(data.y, data.x);
+      } else if (data.btn3Pressed) {
+        speedLeft = QUARTER_SPEED;
+        speedRight = QUARTER_SPEED;
+        move(data.y, data.x);
       } else if (data.joystickPressed) {
-        speedLeft = HALF_SPEED;
-        speedRight = -HALF_SPEED;
+        speedLeft = QUARTER_SPEED;
+        speedRight = -QUARTER_SPEED;
         motorLeft.setSpeed(speedLeft);
         motorRight.setSpeed(speedRight);
       } else {
@@ -92,13 +97,10 @@ void loop() {
         // TODO: Forklift up.
       } else if (data.btn2Pressed) {
         // TODO: Forklift down.
+      } else if (data.btn3Pressed) {
+        // TODO: Spin drill.
       }
     }
-
-    if (data.btn3Pressed) {
-      // TODO: Spin drill.
-    }
-    
 
     char buffer[128];
     snprintf(buffer, sizeof(buffer),

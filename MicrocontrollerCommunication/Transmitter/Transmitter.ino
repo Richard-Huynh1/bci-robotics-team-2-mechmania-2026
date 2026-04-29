@@ -17,10 +17,10 @@ Links used:
 
 #define JOYSTICK_DEADZONE 40  // Minimum change to trigger send
 
-#define BUTTON_PIN_1 0  // Full gas/forklift up
-#define BUTTON_PIN_2 1  // Half gas/forklift down
-#define BUTTON_PIN_3 2  // Spin drill
-#define BUTTON_PIN_4 3  // Switch modes
+#define BUTTON_PIN_1 2  // Full gas/forklift up
+#define BUTTON_PIN_2 3  // Half gas/forklift down
+#define BUTTON_PIN_3 4  // Spin drill
+#define BUTTON_PIN_4 5  // Switch modes
 
 typedef struct {
   short x;
@@ -50,7 +50,6 @@ void setup() {
   radio.setChannel(108);
   radio.openWritingPipe(address);
   radio.setPALevel(RF24_PA_MIN);
-  radio.setRetries(15, 15);
   radio.stopListening();
 }
 
