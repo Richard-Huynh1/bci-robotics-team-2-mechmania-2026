@@ -11,9 +11,11 @@ See image (for joystick):
 #include <nRF24L01.h>
 #include <RF24.h> 
 #include <CytronMotorDriver.h>
+#include <string.h>
 
 #define MAX_SPEED 255
 #define HALF_SPEED 128
+#define QUARTER_SPEED 64
 
 #define M1A 2
 #define M1B 3
@@ -27,23 +29,27 @@ typedef struct {
   short x;
   short y;
   bool joystickPressed;
-  bool maxGasPressed;
-  bool halfGasPressed;
-  bool isCorrectSignal;
+  bool btn1Pressed;
+  bool btn2Pressed;
+  bool btn3Pressed;
+  bool btn4Pressed;
+  char password[6];
 } DataPackage;
 
 DataPackage data;
+bool isDriving = true;
 
 RF24 radio(7, 8); // CE, CSN
 
 // Speeds are 0-255 PWM
 int speedLeft = 255;
 int speedRight = 255;
-const byte address[6] = "00001";
+const byte address[6] = "BCIT2";
 
 void setup() {
   Serial.begin(9600);
   radio.begin();
+  radio.setChannel(108);
   radio.openReadingPipe(0, address);
   radio.setPALevel(RF24_PA_MIN);
   radio.startListening();
@@ -52,28 +58,57 @@ void setup() {
 void loop() {
   if (radio.available()) {
     radio.read(&data, sizeof(data));
-    if (!data.isCorrectSignal) return;
+    if (strcmp(data.password, "BCIT2")) return;
 
-    if (data.maxGasPressed) {
-      speedLeft = MAX_SPEED;
-      speedRight = MAX_SPEED;
-      move(data.y, data.x);
-    } else if (data.halfGasPressed) {
-      speedLeft = HALF_SPEED;
-      speedRight = HALF_SPEED;
-      move(data.y, data.x);
-    } else {
+    if (data.btn4Pressed) {
+      isDriving = !isDriving;
       speedLeft = 0;
       speedRight = 0;
       motorLeft.setSpeed(speedLeft);
       motorRight.setSpeed(speedRight);
     }
 
+    if (isDriving) {
+      if (data.btn1Pressed) {
+        speedLeft = MAX_SPEED;
+        speedRight = MAX_SPEED;
+        move(data.y, data.x);
+      } else if (data.btn2Pressed) {
+        speedLeft = HALF_SPEED;
+        speedRight = HALF_SPEED;
+        move(data.y, data.x);
+      } else if (data.btn3Pressed) {
+        speedLeft = QUARTER_SPEED;
+        speedRight = QUARTER_SPEED;
+        move(data.y, data.x);
+      } else if (data.joystickPressed) {
+        speedLeft = QUARTER_SPEED;
+        speedRight = -QUARTER_SPEED;
+        motorLeft.setSpeed(speedLeft);
+        motorRight.setSpeed(speedRight);
+      } else {
+        speedLeft = 0;
+        speedRight = 0;
+        motorLeft.setSpeed(speedLeft);
+        motorRight.setSpeed(speedRight);
+      }
+    } else {
+      if (data.btn1Pressed) {
+        // TODO: Forklift up.
+      } else if (data.btn2Pressed) {
+        // TODO: Forklift down.
+      } else if (data.btn3Pressed) {
+        // TODO: Spin drill.
+      }
+    }
+
     char buffer[128];
     snprintf(buffer, sizeof(buffer),
-      "(%d, %d), joystick button pressed: %s, max gas pressed: %s, half gas pressed: %s, is signal: %s",
+      "(%d, %d), joystick pressed: %s, 1: %s, 2: %s, 3: %s, 4: %s, password: %s",
        data.x, data.y, data.joystickPressed ? "true" : "false",
-       data.maxGasPressed ? "true" : "false", data.halfGasPressed ? "true" : "false", data.isCorrectSignal ? "true" : "false"
+       data.btn1Pressed ? "true" : "false", data.btn2Pressed ? "true" : "false",
+       data.btn3Pressed ? "true" : "false", data.btn4Pressed ? "true" : "false",
+       data.password
     );
 
     Serial.println(buffer);
