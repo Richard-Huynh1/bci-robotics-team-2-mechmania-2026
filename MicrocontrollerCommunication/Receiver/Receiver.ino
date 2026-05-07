@@ -100,8 +100,8 @@ void loop() {
         speedRight = QUARTER_SPEED;
         move(data.y, data.x);
       } else if (data.joystickPressed) {
-        speedLeft = QUARTER_SPEED;
-        speedRight = -QUARTER_SPEED;
+        speedLeft = HALF_SPEED;
+        speedRight = -HALF_SPEED;
         motorLeft.setSpeed(speedLeft);
         motorRight.setSpeed(speedRight);
       } else {
@@ -196,10 +196,10 @@ void move(short y, short x) {
 void moveForklift(short x) {
   // Forklift up
   if (x > 0) {
-    motorForklift.setSpeed(QUARTER_SPEED);
+    motorForklift.setSpeed(HALF_SPEED);
   // Forklift down
   } else if (x < 0) {
-    motorForklift.setSpeed(-QUARTER_SPEED);
+    motorForklift.setSpeed(-HALF_SPEED);
   // Stop forklift
   } else {
     motorForklift.setSpeed(0);
