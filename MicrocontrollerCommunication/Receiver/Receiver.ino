@@ -196,10 +196,10 @@ void move(short y, short x) {
 void moveForklift(short x) {
   // Forklift up
   if (x > 0) {
-    motorForklift.setSpeed(HALF_SPEED);
+    motorForklift.setSpeed(MAX_SPEED);
   // Forklift down
   } else if (x < 0) {
-    motorForklift.setSpeed(-HALF_SPEED);
+    motorForklift.setSpeed(-MAX_SPEED);
   // Stop forklift
   } else {
     motorForklift.setSpeed(0);
