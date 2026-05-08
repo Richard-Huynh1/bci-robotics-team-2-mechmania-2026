@@ -13,7 +13,7 @@ Here are the rest of the controls:
 This is the default mode when everything is plugged in.
 
 - **Joystick movement:** Move direction (must press gas to actually move)
-- **Joystick press:** Spin in one place
+- **Joystick press:** Spin counterclockwise (towards drill)
 - **Button 1:** Quarter speed
 - **Button 2:** Change mode
 - **Button 3:** Full speed
