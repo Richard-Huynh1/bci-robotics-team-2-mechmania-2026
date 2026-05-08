@@ -117,13 +117,13 @@ void loop() {
         if (platformTilted) {
           platformServo.write(0);
         } else {
-          platformServo.write(45);
+          platformServo.write(55);
         }
         platformTilted = !platformTilted;
       }
       // Spin drill
       if (data.btn2Pressed) {
-        motorDrill.setSpeed(HALF_SPEED);
+        motorDrill.setSpeed(-HALF_SPEED);
       } else {
         motorDrill.setSpeed(0);
       }
