@@ -1,7 +1,9 @@
 /*
 Links used:
+- https://www.cytron.io/tutorial/getting-started-mdd3a-makerdrive-motor-driver-using-arduino
 - https://howtomechatronics.com/tutorials/arduino/arduino-wireless-communication-nrf24l01-tutorial/
 - https://projecthub.arduino.cc/hibit/using-joystick-module-with-arduino-0ffdd4
+- https://howtomechatronics.com/how-it-works/how-servo-motors-work-how-to-control-servos-using-arduino/
 
 See image (for joystick):
 - https://components101.com/sites/default/files/inline-images/Joystick-Module-Analog-Output.png
@@ -11,19 +13,23 @@ See image (for joystick):
 #include <nRF24L01.h>
 #include <RF24.h> 
 #include <CytronMotorDriver.h>
+#include <Servo.h>
 #include <string.h>
 
 #define MAX_SPEED 255
 #define HALF_SPEED 128
 #define QUARTER_SPEED 64
 
-#define M1A 2
-#define M1B 3
-#define M2A 4
-#define M2B 5
+CytronMD motorRight(PWM_PWM, 2, 3);
+CytronMD motorLeft(PWM_PWM, 4, 5);
+CytronMD motorDrill(PWM_PWM, 9, 10);
+CytronMD motorForklift(PWM_PWM, 11, 12);
 
-CytronMD motorRight(PWM_PWM, M1A, M1B);
-CytronMD motorLeft(PWM_PWM, M2A, M2B);
+Servo platformServo;
+Servo drillServo;
+
+bool platformTilted = false;
+bool drillDown = false;
 
 typedef struct {
   short x;
@@ -46,8 +52,18 @@ int speedLeft = 255;
 int speedRight = 255;
 const byte address[6] = "BCIT2";
 
+void move(short y, short x);
+void moveForklift(short x);
+
 void setup() {
   Serial.begin(9600);
+
+  platformServo.attach(45);
+  drillServo.attach(44);
+
+  platformServo.write(0);
+  drillServo.write(0);
+
   radio.begin();
   radio.setChannel(108);
   radio.openReadingPipe(0, address);
@@ -66,6 +82,8 @@ void loop() {
       speedRight = 0;
       motorLeft.setSpeed(speedLeft);
       motorRight.setSpeed(speedRight);
+      motorDrill.setSpeed(0);
+      motorForklift.setSpeed(0);
     }
 
     if (isDriving) {
@@ -82,8 +100,8 @@ void loop() {
         speedRight = QUARTER_SPEED;
         move(data.y, data.x);
       } else if (data.joystickPressed) {
-        speedLeft = QUARTER_SPEED;
-        speedRight = -QUARTER_SPEED;
+        speedLeft = HALF_SPEED;
+        speedRight = -HALF_SPEED;
         motorLeft.setSpeed(speedLeft);
         motorRight.setSpeed(speedRight);
       } else {
@@ -93,12 +111,30 @@ void loop() {
         motorRight.setSpeed(speedRight);
       }
     } else {
+      moveForklift(data.x);
+      // Tilt platform
       if (data.btn1Pressed) {
-        // TODO: Forklift up.
-      } else if (data.btn2Pressed) {
-        // TODO: Forklift down.
-      } else if (data.btn3Pressed) {
-        // TODO: Spin drill.
+        if (platformTilted) {
+          platformServo.write(0);
+        } else {
+          platformServo.write(55);
+        }
+        platformTilted = !platformTilted;
+      }
+      // Spin drill
+      if (data.btn2Pressed) {
+        motorDrill.setSpeed(-HALF_SPEED);
+      } else {
+        motorDrill.setSpeed(0);
+      }
+      // Drill up/down
+      if (data.btn3Pressed) {
+        if (drillDown) {
+          drillServo.write(0);
+        } else {
+          drillServo.write(180);
+        }
+        drillDown = !drillDown;
       }
     }
 
@@ -155,4 +191,17 @@ void move(short y, short x) {
   
   motorLeft.setSpeed(speedLeft);
   motorRight.setSpeed(speedRight);
+}
+
+void moveForklift(short x) {
+  // Forklift up
+  if (x > 0) {
+    motorForklift.setSpeed(HALF_SPEED);
+  // Forklift down
+  } else if (x < 0) {
+    motorForklift.setSpeed(-HALF_SPEED);
+  // Stop forklift
+  } else {
+    motorForklift.setSpeed(0);
+  }
 }
