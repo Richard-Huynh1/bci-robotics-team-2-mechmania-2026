@@ -9,6 +9,7 @@
     - [Driving Mode](#driving-mode)
     - [Action Mode](#action-mode)
   - [Bill of Materials Link](#bill-of-materials-link)
+  - [Demo Videos](#demo-videos)
   - [Team Members](#team-members)
 
 ## Description
@@ -75,6 +76,10 @@ This is the default mode when everything is plugged in.
 
 Here is the link to the bill of materials: [Link](https://docs.google.com/spreadsheets/d/1pDJakI2937subbM1QwxTJR9V5k_md9ht5O3d4-HkXg0/edit?usp=sharing)
 
+## Demo Videos
+
+Here is a link to the Google Drive folder containing demo videos of the car: [Link](https://drive.google.com/drive/folders/1xLPtX33iqkmJ1HCEXODp4CY6vhk1JXrE?usp=drive_link)
+
 ## Team Members
 
 - Slobodan Zivkovic (Mr. Zee, awesome teacher)
@@ -83,7 +88,7 @@ Here is the link to the bill of materials: [Link](https://docs.google.com/spread
 - Rafael Alekberov
 - Alex Zheng
 - CJ Tejero
-- Lia Jung 
+- Lia Jung
 - Zonaira Junaid
 - Louise Shin
 - Yash Vakil
