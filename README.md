@@ -95,4 +95,4 @@ Here is a link to the Google Drive folder containing demo videos of the car: [Li
 - Louise Shin
 - Yash Vakil
 
-Thank you everyone for the effort. Especially improvising to drive the car on dirt for the tree planting event.
+Thank you everyone for the effort. Especially in improvising to drive the car on dirt for the tree planting event.
