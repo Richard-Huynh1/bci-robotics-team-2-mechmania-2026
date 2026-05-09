@@ -9,6 +9,7 @@
     - [Driving Mode](#driving-mode)
     - [Action Mode](#action-mode)
   - [Bill of Materials Link](#bill-of-materials-link)
+  - [Team Members](#team-members)
 
 ## Description
 
@@ -73,3 +74,18 @@ This is the default mode when everything is plugged in.
 ## Bill of Materials Link
 
 Here is the link to the bill of materials: [Link](https://docs.google.com/spreadsheets/d/1pDJakI2937subbM1QwxTJR9V5k_md9ht5O3d4-HkXg0/edit?usp=sharing)
+
+## Team Members
+
+- Slobodan Zivkovic (Mr. Zee, awesome teacher)
+- Sravya Vemula
+- Richard Huynh
+- Rafael Alekberov
+- Alex Zheng
+- CJ Tejero
+- Lia Jung 
+- Zonaira Junaid
+- Louise Shin
+- Yash Vakil
+
+Thank you everyone for the effort. Especially improvising to drive the car on dirt for the tree planting event.
