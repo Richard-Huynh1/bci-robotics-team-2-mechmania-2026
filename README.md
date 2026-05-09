@@ -4,8 +4,8 @@
 
 - [Bluevale Collegiate Institute MechMania 2026 Team 2](#bluevale-collegiate-institute-mechmania-2026-team-2)
   - [Description](#description)
-  - [Parts in Controller](#parts-in-controller)
-  - [Parts in Car](#parts-in-car)
+  - [Parts in the Controller](#parts-in-the-controller)
+  - [Parts in the Car](#parts-in-the-car)
   - [Technical Notes](#technical-notes)
   - [Controller Instructions](#controller-instructions)
     - [Driving Mode](#driving-mode)
@@ -20,7 +20,7 @@ This project was made possible by having two microcontrollers: one in the contro
 
 In the Code folder, you will find all the code for the car and controller as well as wiring schematics. The schematics were made by a software called KiCad and the KiCad files are also located in this repository in case you would like to modify the schematics.
 
-## Parts in Controller
+## Parts in the Controller
 
 - 1 Arduino Uno R3 Clone
 - 1 NRF24L01 with breakout board (wireless transmitter)
@@ -28,7 +28,7 @@ In the Code folder, you will find all the code for the car and controller as wel
 - 2 9V batteries (one for NRF24L01 and one for UNO)
 - 4 push buttons
 
-## Parts in Car
+## Parts in the Car
 
 - 1 ELEGOO MEGA 2560 R3 Board (powered by 9V battery)
 - 1 NRF24L01 with breakout board (wireless receiver)
