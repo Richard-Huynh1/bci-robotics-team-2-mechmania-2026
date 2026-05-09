@@ -1,5 +1,7 @@
 # Bluevale Collegiate Institute MechMania 2026 Team 2
 
+![MechMania car](./car.jpg)
+
 - [Bluevale Collegiate Institute MechMania 2026 Team 2](#bluevale-collegiate-institute-mechmania-2026-team-2)
   - [Description](#description)
   - [Parts in Controller](#parts-in-controller)
